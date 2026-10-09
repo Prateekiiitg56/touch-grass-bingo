@@ -1,0 +1,319 @@
+/* Topographic map palette: paper, woodland tint, contour brown, ink, trail blaze. */
+:root {
+  --paper: #ffffff;
+  --woodland: #d9e8c4;
+  --woodland-ink: #2c4a1e;
+  --contour: #9a5b32;
+  --ink: #1a1a1a;
+  --soft: #5d625a;
+  --rule: #c9d3bd;
+  --blaze: #f2600c;
+  --dock: rgb(255 255 255 / 0.94);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #171a17;
+    --woodland: #24321d;
+    --woodland-ink: #cfe3b8;
+    --contour: #d39a6d;
+    --ink: #f1f3ee;
+    --soft: #a6ad9f;
+    --rule: #34402c;
+    --blaze: #ff7a2e;
+    --dock: rgb(23 26 23 / 0.94);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #171a17;
+  --woodland: #24321d;
+  --woodland-ink: #cfe3b8;
+  --contour: #d39a6d;
+  --ink: #f1f3ee;
+  --soft: #a6ad9f;
+  --rule: #34402c;
+  --blaze: #ff7a2e;
+  --dock: rgb(23 26 23 / 0.94);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Archivo, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+main {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 20px 16px 120px;
+}
+a { color: inherit; text-underline-offset: 2px; }
+
+/* ---------- header ---------- */
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 10vw, 3rem);
+  font-weight: 800;
+  font-stretch: 62%;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+.code-chip {
+  flex: none;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--soft);
+  background: none;
+  border: 1.5px solid var(--rule);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.code-chip strong { color: var(--ink); font-stretch: 85%; letter-spacing: 0.02em; }
+.meta {
+  margin: 10px 0 16px;
+  color: var(--soft);
+  font-size: 0.9375rem;
+}
+
+/* ---------- photo checker download ---------- */
+.kit {
+  border-left: 4px solid var(--contour);
+  padding: 2px 0 2px 14px;
+  margin: 0 0 20px;
+}
+.kit p { margin: 0 0 10px; font-size: 0.9375rem; max-width: 60ch; }
+.kit progress { width: 100%; height: 6px; margin: 0 0 10px; accent-color: var(--woodland-ink); }
+.kit.ready { border-left-color: var(--woodland-ink); }
+.kit.ready p { margin: 0; color: var(--soft); }
+
+/* ---------- the card ---------- */
+.map {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  grid-template-rows: 18px auto;
+  gap: 4px;
+}
+.refs {
+  display: grid;
+  color: var(--contour);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-stretch: 75%;
+  place-items: center;
+}
+.refs.cols { grid-column: 2; grid-template-columns: repeat(var(--n), 1fr); column-gap: 4px; }
+.refs.rows { grid-column: 1; grid-row: 2; grid-template-rows: repeat(var(--n), 1fr); row-gap: 4px; }
+
+.board {
+  grid-column: 2;
+  grid-row: 2;
+  position: relative;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 4px;
+}
+.grid {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: 4px;
+}
+.cell {
+  position: relative;
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 2px;
+  background: var(--woodland);
+  color: var(--woodland-ink);
+  padding: 8px;
+  display: flex;
+  align-items: flex-end;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  font: inherit;
+}
+.cell .label {
+  /* Scales with the card itself, so labels stay in proportion at any screen size. */
+  font-size: clamp(0.72rem, calc(13cqi / var(--n)), 1.5rem);
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: 1.05;
+}
+.grid[data-n="5"] .cell { padding: 5px; }
+.cell.center {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 7px, rgb(44 74 30 / 0.14) 7px 8px),
+    var(--woodland);
+  box-shadow: inset 0 0 0 2px var(--woodland-ink);
+}
+.cell.found { padding: 0; background: var(--ink); }
+.cell.found img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cell.found .label {
+  position: relative;
+  width: 100%;
+  padding: 14px 6px 5px;
+  color: #fff;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.7));
+}
+.cell:focus-visible, .btn:focus-visible, .code-chip:focus-visible, summary:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--blaze);
+  outline-offset: 2px;
+}
+
+/* Bingo route: the one loud element on the page. */
+.route {
+  position: absolute;
+  inset: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  pointer-events: none;
+  overflow: visible;
+}
+.route line {
+  stroke: var(--blaze);
+  stroke-width: 0.11;
+  stroke-linecap: round;
+  opacity: 0.92;
+}
+.route line.new {
+  stroke-dasharray: 10;
+  stroke-dashoffset: 10;
+  animation: draw 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) 0.15s forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- text sections ---------- */
+.how { margin: 32px 0 8px; max-width: 60ch; }
+.how h2, .setup summary {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-stretch: 75%;
+  margin: 0 0 8px;
+}
+.how p { margin: 0 0 10px; color: var(--soft); }
+
+.setup { border-top: 1.5px solid var(--rule); margin-top: 24px; padding-top: 16px; }
+.setup summary { cursor: pointer; margin: 0; }
+.fields { display: grid; gap: 6px; margin: 16px 0; }
+.fields label { font-weight: 600; font-size: 0.9375rem; margin-top: 8px; }
+.help { margin: 0; color: var(--soft); font-size: 0.875rem; }
+input, select {
+  font: inherit;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1.5px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--soft);
+  max-width: 60ch;
+}
+
+/* ---------- buttons + dock ---------- */
+.btn {
+  font: inherit;
+  font-weight: 700;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 6px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+}
+.btn.line { background: transparent; color: var(--ink); }
+.btn.primary { font-size: 1.0625rem; }
+.btn:active { transform: translateY(1px); }
+
+.dock {
+  position: fixed;
+  inset: auto 0 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--dock);
+  border-top: 1.5px solid var(--rule);
+  backdrop-filter: blur(8px);
+}
+.dock .primary { flex: 1; max-width: 26rem; min-height: 54px; }
+
+/* ---------- result sheet ---------- */
+dialog {
+  width: min(100vw, 30rem);
+  max-width: 100vw;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px 12px 0 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+}
+@media (min-width: 640px) {
+  dialog { margin: auto; border-radius: 10px; }
+}
+dialog::backdrop { background: rgb(0 0 0 / 0.55); }
+dialog img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--woodland); }
+.sheet-body { padding: 18px 20px calc(20px + env(safe-area-inset-bottom)); }
+dialog h2 {
+  margin: 0 0 6px;
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-stretch: 70%;
+  line-height: 1.05;
+}
+dialog p { margin: 0 0 18px; color: var(--soft); }
+dialog .btn { width: 100%; }
+dialog.celebrate h2 { color: var(--blaze); font-size: 2.5rem; }
+
+/* ---------- wide screens ----------
+   Card on the right, sized to the screen height so it never needs scrolling.
+   Text column on the left. */
+@media (min-width: 900px) {
+  main {
+    max-width: 76rem;
+    padding: 40px 32px 120px;
+    display: grid;
+    grid-template-columns: minmax(19rem, 25rem) 1fr;
+    grid-template-rows: repeat(6, auto) 1fr;
+    column-gap: 56px;
+    align-items: start;
+  }
+  main > * { grid-column: 1; }
+  .map {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    position: sticky;
+    top: 32px;
+    width: min(100%, calc(100svh - 150px));
+    justify-self: center;
+  }
+  .top { flex-direction: column; align-items: flex-start; gap: 16px; }
+  h1 { font-size: 4rem; }
+  .how { margin-top: 12px; }
+  .refs { font-size: 0.8125rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route line.new { animation: none; stroke-dashoffset: 0; }
+  .btn:active { transform: none; }
+}

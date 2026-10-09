@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Touch Grass Bingo</title>
+  <meta name="description" content="Nature bingo you play outside. An open-weight AI model on your phone checks each photo. Works with no signal. Nothing is uploaded.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171a17" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header class="top">
+      <h1>Touch grass bingo</h1>
+      <button id="card-btn" class="code-chip" type="button" aria-controls="setup">Card <strong id="code-label"></strong></button>
+    </header>
+
+    <p id="meta" class="meta" aria-live="polite"></p>
+
+    <section id="kit" class="kit" aria-live="polite">
+      <p id="kit-status">Download the photo checker while you have Wi-Fi. It is about 150 MB and lets the game work with no signal.</p>
+      <progress id="kit-bar" max="100" value="0" hidden></progress>
+      <button id="kit-btn" class="btn line" type="button">Download photo checker</button>
+    </section>
+
+    <div class="map" id="map">
+      <div class="refs cols" id="col-refs" aria-hidden="true"></div>
+      <div class="refs rows" id="row-refs" aria-hidden="true"></div>
+      <div class="board">
+        <div id="grid" class="grid" role="group" aria-label="Bingo card"></div>
+        <svg id="route" class="route" aria-hidden="true" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+
+    <section class="how">
+      <h2>How to play</h2>
+      <p>Walk somewhere green and keep the phone in your pocket. When you spot something on the card, tap its square and take one photo. Fill a whole row, column or diagonal to win.</p>
+      <p>The middle square is never free. Put your hand on real grass and photograph it.</p>
+    </section>
+
+    <details class="setup" id="setup">
+      <summary>Card settings</summary>
+      <div class="fields">
+        <label for="code">Card code</label>
+        <input id="code" autocomplete="off" spellcheck="false" maxlength="16" aria-describedby="code-help">
+        <p id="code-help" class="help">Friends who enter the same code get the same card.</p>
+
+        <label for="size">Card size</label>
+        <select id="size">
+          <option value="3">Short walk, 3 by 3</option>
+          <option value="5">Long hike, 5 by 5</option>
+        </select>
+
+        <label for="season">Season</label>
+        <select id="season">
+          <option value="auto">Match today's date</option>
+          <option value="spring">Spring</option>
+          <option value="summer">Summer</option>
+          <option value="autumn">Autumn</option>
+          <option value="winter">Winter</option>
+        </select>
+
+        <label for="hemisphere">Hemisphere</label>
+        <select id="hemisphere">
+          <option value="north">Northern</option>
+          <option value="south">Southern</option>
+        </select>
+      </div>
+      <button id="deal" class="btn" type="button">Deal new card</button>
+    </details>
+
+    <footer>
+      Photos are checked on this phone by <a href="https://huggingface.co/Xenova/clip-vit-base-patch32">CLIP</a>, an open-weight model,
+      running in <a href="https://github.com/huggingface/transformers.js">Transformers.js</a>. No photo is uploaded.
+    </footer>
+  </main>
+
+  <nav class="dock">
+    <button id="snap" class="btn primary" type="button">Take a photo</button>
+    <button id="share" class="btn line" type="button" hidden>Share card</button>
+  </nav>
+
+  <input id="file" type="file" accept="image/*" capture="environment" hidden>
+
+  <dialog id="result">
+    <img id="result-img" alt="Your photo">
+    <div class="sheet-body">
+      <h2 id="result-title"></h2>
+      <p id="result-body"></p>
+      <button id="result-close" class="btn primary" type="button">Back outside</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
